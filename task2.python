@@ -1,0 +1,121 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "bd4d625a-eedd-4a94-8806-a85ce17c6aef",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Predicted gender for the new entry: male\n",
+      "\n",
+      "Updated dataset after adding the new entry:\n",
+      "   Gender  Height  Weight  Foot_Size\n",
+      "0    male    6.00     180         12\n",
+      "1    male    5.92     190         11\n",
+      "2    male    5.58     170         12\n",
+      "3    male    5.92     165         10\n",
+      "4  female    5.00     100          6\n",
+      "5  female    5.50     150          8\n",
+      "6  female    5.42     130          7\n",
+      "7  female    5.75     150          9\n",
+      "8    male    5.50     160         10\n"
+     ]
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from sklearn.tree import DecisionTreeClassifier\n",
+    "from sklearn.preprocessing import LabelEncoder\n",
+    "\n",
+    "# Step 1: Define the data as a DataFrame\n",
+    "data = {\n",
+    "    'Gender': ['male', 'male', 'male', 'male', 'female', 'female', 'female', 'female'],\n",
+    "    'Height': [6.00, 5.92, 5.58, 5.92, 5.00, 5.50, 5.42, 5.75],\n",
+    "    'Weight': [180, 190, 170, 165, 100, 150, 130, 150],\n",
+    "    'Foot_Size': [12, 11, 12, 10, 6, 8, 7, 9]\n",
+    "}\n",
+    "\n",
+    "# Create a DataFrame\n",
+    "df = pd.DataFrame(data)\n",
+    "\n",
+    "# Step 2: Encode the 'Gender' column using LabelEncoder\n",
+    "label_encoder = LabelEncoder()\n",
+    "df['Gender'] = label_encoder.fit_transform(df['Gender'])  # Male: 0, Female: 1\n",
+    "\n",
+    "# Step 3: Separate features (X) and target variable (y)\n",
+    "X = df[['Height', 'Weight', 'Foot_Size']]  # Features: Height, Weight, Foot_Size\n",
+    "y = df['Gender']  # Target: Gender\n",
+    "\n",
+    "# Step 4: Train the Decision Tree Classifier\n",
+    "clf = DecisionTreeClassifier()\n",
+    "clf.fit(X, y)\n",
+    "\n",
+    "# Step 5: Define a new entry to predict (example input)\n",
+    "new_entry = {'Height': 5.5, 'Weight': 160, 'Foot_Size': 10}\n",
+    "\n",
+    "# Step 6: Convert the new entry to a DataFrame to maintain feature names\n",
+    "new_entry_df = pd.DataFrame([new_entry])\n",
+    "\n",
+    "# Step 7: Predict the gender of the new entry\n",
+    "predicted_gender = clf.predict(new_entry_df)[0]\n",
+    "predicted_gender_label = label_encoder.inverse_transform([predicted_gender])[0]\n",
+    "\n",
+    "# Step 8: Print the predicted gender for the new entry\n",
+    "print(f\"Predicted gender for the new entry: {predicted_gender_label}\")\n",
+    "\n",
+    "# Step 9: Add the new entry with the predicted label to the dataset\n",
+    "new_entry_df['Gender'] = predicted_gender  # Add predicted gender as a numeric value\n",
+    "\n",
+    "# Concatenate the new entry to the existing DataFrame\n",
+    "df = pd.concat([df, new_entry_df], ignore_index=True)\n",
+    "\n",
+    "# Step 10: Retrain the classifier with the updated dataset\n",
+    "X = df[['Height', 'Weight', 'Foot_Size']]  # Update features with the new data\n",
+    "y = df['Gender']  # Update target with the new data\n",
+    "clf.fit(X, y)\n",
+    "\n",
+    "# Step 11: Save the updated dataset back to Excel or print the updated data\n",
+    "df['Gender'] = label_encoder.inverse_transform(df['Gender'])  # Convert gender back to text\n",
+    "print(\"\\nUpdated dataset after adding the new entry:\")\n",
+    "print(df)\n",
+    "\n",
+    "# Optionally, save the updated dataset to Excel\n",
+    "df.to_excel('updated_dataset.xlsx', index=False)\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2d1639f0-b577-4f92-9102-a91b576339bc",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
